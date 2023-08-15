@@ -76,4 +76,6 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
+    // To use database
+    implementation 'androidx.room:room-ktx:2.5.2'
 }
