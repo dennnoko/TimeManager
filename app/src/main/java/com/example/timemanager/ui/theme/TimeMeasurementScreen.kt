@@ -19,6 +19,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -47,6 +50,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
@@ -57,17 +61,19 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
 
     //ストップウォッチ用
     var startTime: Long by remember { mutableStateOf(0) }
-    var ansTime: Long by remember { mutableStateOf(0) }
+    var ansTime: Int by remember { mutableStateOf(0) }
     var btnTxt by remember { mutableStateOf("start") }
     //スタートストップ切り替え
     var startStop by remember { mutableStateOf(false) }
     //結果表示切り替え
     var ans by remember { mutableStateOf("00:00:00") }
-    //時間フォーマット
-    val swf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+    //時間
+    var ansS: Int by remember { mutableStateOf(0) }
+    var ansM: Int by remember { mutableStateOf(0) }
+    var ansH: Int by remember { mutableStateOf(0) }
 
     //database
-    var doing: String by remember { mutableStateOf("") }
+    var doing: String by remember { mutableStateOf("その他") }
 
     //データ追加の為のコルーチン
     val coroutineScope = rememberCoroutineScope()
@@ -79,8 +85,12 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
             currentTime = System.currentTimeMillis()
 
             if (startStop == true) {
-                ansTime = currentTime - startTime
-                ans = swf.format(ansTime)
+                ansTime = ((currentTime - startTime)/1000).toInt()
+                ansS = ansTime % 60
+                ansM = (ansTime/60) % 60
+                ansH = (ansTime/3600) % 24
+
+                ans = String.format("%02d", ansH) + ":" + String.format("%02d", ansM) + ":" + String.format("%02d", ansS)
             }
 
             delay(1000)
@@ -137,11 +147,16 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
                     Toast.makeText(context, "success", Toast.LENGTH_SHORT).show()
                 }
             },
-            colors = ButtonDefaults.buttonColors(Color.Gray),
+            colors = ButtonDefaults.buttonColors(Color(0xff00f0f0)),
             shape = RoundedCornerShape(5.dp),
             modifier = Modifier
         ) {
-            Text(text = btnTxt)
+            Text(
+                text = btnTxt,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
+            )
         }
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -158,6 +173,7 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
             Column() {
                 radioOptions.forEach {text ->
                     Row(
+                        verticalAlignment = CenterVertically,
                         modifier = Modifier
                             .selectable(
                                 selected = (text == selectedOption),
@@ -169,6 +185,10 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
                     ) {
                         RadioButton(
                             selected = (text == selectedOption),
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color(0xff00f0f0),
+                                unselectedColor = Color.Black,
+                            ),
                             onClick = {
                                 onOptionSelected(text)
                                 doing = text
@@ -177,8 +197,10 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
 
                         Text(
                             text = text,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Medium,
                             modifier = Modifier
-                                .padding(start = 16.dp, top = 5.dp)
+                                .padding(start = 16.dp)
                         )
                     }
                 }
@@ -187,14 +209,23 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = {navController.navigate("SelectScreen")}) {
-            Text(text = "to SelectScreen")
+        Button(
+            onClick = {navController.navigate("SelectScreen")},
+            shape = RoundedCornerShape(5.dp),
+            colors = ButtonDefaults.buttonColors(Color(0xff00f0f0))
+        ) {
+            Text(
+                text = "to SelectScreen",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
+            )
         }
     }
 }
 
 @Composable
-fun AnsWindow(ans: String, ansTime: Long) {
+fun AnsWindow(ans: String, ansTime: Int) {
     OutlinedCard(
         border = BorderStroke(2.dp, Color(0xff00f0f0))
     ) {

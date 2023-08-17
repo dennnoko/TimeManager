@@ -17,4 +17,8 @@ interface TimeDataDao {
     //リスト入手
     @Query("select * from TDE")
     fun getAll(): Flow<List<TimeDataEntity>>
+
+    //何をしていたかを指定し、時間の合計を返す
+    @Query("SELECT SUM(timeData) FROM TDE WHERE doing = :doing")
+    fun getTotalTimeByDoing(doing: String): Int
 }
