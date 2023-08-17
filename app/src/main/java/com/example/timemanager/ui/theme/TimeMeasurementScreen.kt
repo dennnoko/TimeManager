@@ -3,6 +3,7 @@ package com.example.timemanager.ui.theme
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.timemanager.roomTodoList.TodoDatabase
+import com.example.timemanager.roomTodoList.TodoEntity
 import com.example.timemanager.room_components.DayDatabase
 import com.example.timemanager.room_components.TimeDataEntity
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +56,7 @@ import java.util.Locale
 import java.util.TimeZone
 
 @Composable
-fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
+fun TimeMeasurementScreen(navController: NavController, db: DayDatabase, todoDB: TodoDatabase) {
     //時刻を取得
     var currentTime by remember { mutableStateOf(System.currentTimeMillis()) }
     val sdf = SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault())
@@ -90,10 +93,20 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
                 ansM = (ansTime/60) % 60
                 ansH = (ansTime/3600) % 24
 
-                ans = String.format("%02d", ansH) + ":" + String.format("%02d", ansM) + ":" + String.format("%2d", ansS)
+                ans = String.format("%02d", ansH) + ":" + String.format("%02d", ansM) + ":" + String.format("%02d", ansS)
             }
 
             delay(1000)
+        }
+    }
+
+    //doingのリストを取得
+    var todoList by remember { mutableStateOf(emptyList<String>()) }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            todoDB.TodoDao().getAllName().collect() {
+                todoList = it
+            }
         }
     }
 
@@ -167,8 +180,9 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
         Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedCard(border = BorderStroke(2.dp, Color(0xff00f0f0))) {
-            val radioOptions = listOf("プログラミング", "勉強", "ゲーム", "食事", "その他")
-            val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[4]) }
+            val radioOptions = todoList
+            //val radioOptions = listOf("A","B","C")
+            val (selectedOption, onOptionSelected) = remember { mutableStateOf<String?>(null) }
 
             Column() {
                 radioOptions.forEach {text ->
@@ -203,6 +217,14 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
                                 .padding(start = 16.dp)
                         )
                     }
+                }
+
+                //doingを追加するボタン
+                Row(
+                    modifier = Modifier
+                        .clickable {  }
+                ) {
+
                 }
             }
         }
@@ -248,5 +270,9 @@ fun AnsWindow(ans: String, ansTime: Int) {
 fun PreviewTimeMeasuremetScreen() {
     val navController = rememberNavController()
 
-    TimeMeasurementScreen(navController = navController, db = DayDatabase.getDatabase(LocalContext.current.applicationContext))
+    TimeMeasurementScreen(
+        navController = navController,
+        db = DayDatabase.getDatabase(LocalContext.current.applicationContext),
+        todoDB = TodoDatabase.getDatabase(LocalContext.current.applicationContext)
+    )
 }
