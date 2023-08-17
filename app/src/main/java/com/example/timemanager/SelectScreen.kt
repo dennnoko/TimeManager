@@ -17,14 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.timemanager.UIcomponents.TotalTimeGraph
+import com.example.timemanager.room_components.DayDatabase
 
 @Composable
-fun SelectScreen(navController: NavController) {
+fun SelectScreen(navController: NavController, db: DayDatabase) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -49,7 +52,7 @@ fun SelectScreen(navController: NavController) {
                 .padding(start = 80.dp, end = 80.dp)
         ) {
             Text(
-                text = "to TimeMeasurementScreen",
+                text = "Measurement",
                 color = Color.Black
             )
         }
@@ -64,10 +67,12 @@ fun SelectScreen(navController: NavController) {
                 .padding(start = 80.dp, end = 80.dp)
         ) {
             Text(
-                text = "to DataScreen",
+                text = "Data management",
                 color = Color.Black
             )
         }
+        
+        TotalTimeGraph(db = db)
     }
 }
 
@@ -75,8 +80,9 @@ fun SelectScreen(navController: NavController) {
 @Composable
 fun PreviewSelectScreen() {
     val navController = rememberNavController()
+    val db = DayDatabase.getDatabase(LocalContext.current.applicationContext)
 
     Surface() {
-        SelectScreen(navController)
+        SelectScreen(navController, db)
     }
 }

@@ -18,7 +18,11 @@ interface TimeDataDao {
     @Query("select * from TDE")
     fun getAll(): Flow<List<TimeDataEntity>>
 
+    //doingのリストを返す
+    @Query("SELECT DISTINCT doing FROM TDE")
+    suspend fun getDistinctDoingList(): List<String>
+
     //何をしていたかを指定し、時間の合計を返す
     @Query("SELECT SUM(timeData) FROM TDE WHERE doing = :doing")
-    fun getTotalTimeByDoing(doing: String): Int
+    suspend fun getTotalTimeByDoing(doing: String): Int
 }

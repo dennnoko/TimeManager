@@ -6,6 +6,7 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.timemanager.roomTodoList.TodoDatabase
 import com.example.timemanager.room_components.DayDatabase
 import com.example.timemanager.ui.theme.DataScreen
 import com.example.timemanager.ui.theme.TimeMeasurementScreen
@@ -16,9 +17,11 @@ fun MainScreen() {
 
     val db = DayDatabase.getDatabase(context = LocalContext.current.applicationContext)
 
+    val todoDB = TodoDatabase.getDatabase(context = LocalContext.current.applicationContext)
+
     NavHost(navController = navController, startDestination = "SelectScreen") {
-        composable("SelectScreen") { SelectScreen(navController) }
+        composable("SelectScreen") { SelectScreen(navController, db) }
         composable("TimeMeasurementScreen") { TimeMeasurementScreen(navController, db) }
-        composable("DataScreen") { DataScreen(navController, db) }
+        composable("DataScreen") { DataScreen(navController, db, todoDB) }
     }
 }

@@ -90,7 +90,7 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase) {
                 ansM = (ansTime/60) % 60
                 ansH = (ansTime/3600) % 24
 
-                ans = String.format("%02d", ansH) + ":" + String.format("%02d", ansM) + ":" + String.format("%02d", ansS)
+                ans = String.format("%02d", ansH) + ":" + String.format("%02d", ansM) + ":" + String.format("%2d", ansS)
             }
 
             delay(1000)

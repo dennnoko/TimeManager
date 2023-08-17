@@ -12,11 +12,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.timemanager.roomTodoList.TodoDatabase
+import com.example.timemanager.roomTodoList.TodoEntity
 import com.example.timemanager.room_components.DayDatabase
 import com.example.timemanager.room_components.TimeDataEntity
 import kotlinx.coroutines.Dispatchers
@@ -46,15 +53,27 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun DataScreen(navController: NavController, dayDatabase: DayDatabase) {
+fun DataScreen(navController: NavController, dayDatabase: DayDatabase, todoDB: TodoDatabase) {
     var dataList by remember { mutableStateOf(emptyList<TimeDataEntity>()) }
     val coroutineScope = rememberCoroutineScope()
+    var todoList by remember { mutableStateOf(emptyList<TodoEntity>()) }
+    //選択中のタスクEntityの保存
+    var todoName:TodoEntity by remember { mutableStateOf(TodoEntity(0,"")) }
+    //データ削除の為
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             dayDatabase.TimeDataDao().getAll().collect() {
                 dataList = it
             }
+
+            todoDB.TodoDao().getAll().collect() {
+                todoList = it
+            }
+
+            //初期化
+            //todoName = todoList[0]
         }
     }
 
@@ -82,7 +101,7 @@ fun DataScreen(navController: NavController, dayDatabase: DayDatabase) {
             border = BorderStroke(3.dp, color = Color(0xff00f0f0)),
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
-                .size(250.dp, 300.dp)
+                .size(250.dp, 150.dp)
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -133,6 +152,33 @@ fun DataScreen(navController: NavController, dayDatabase: DayDatabase) {
                 color = Color.Black
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Divider()
+        Spacer(modifier = Modifier.height(10.dp))
+
+        OutlinedCard(
+            border = BorderStroke(3.dp, Color(0xff00f0f0)),
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier
+                .size(250.dp, 150.dp)
+        ) {
+
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    withContext(Dispatchers.IO) {
+                        //todoDB.TodoDao().deleteTodo(todo = todoName)
+                    }
+                }
+            },
+            colors = ButtonDefaults.buttonColors(Color(0xff00f0f0))
+        ) {
+            Text(text = "Delete selected item", color = Color.Black)
+        }
     }
 }
 
@@ -142,6 +188,7 @@ fun PreviewDataScreen() {
     Surface() {
         val navController = rememberNavController()
         val dayDatabase = DayDatabase.getDatabase(LocalContext.current.applicationContext)
-        DataScreen(navController , dayDatabase)
+        val todoDB = TodoDatabase.getDatabase(LocalContext.current.applicationContext)
+        DataScreen(navController , dayDatabase, todoDB)
     }
 }
