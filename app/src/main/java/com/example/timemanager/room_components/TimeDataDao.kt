@@ -15,6 +15,9 @@ interface TimeDataDao {
     @Delete
     suspend fun deleteAll(dataList: List<TimeDataEntity>)
     //リスト入手
+    //特定のデータ削除
+    @Delete
+    suspend fun delete(timeData: TimeDataEntity)
     @Query("select * from TDE")
     fun getAll(): Flow<List<TimeDataEntity>>
 

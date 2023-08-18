@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,18 +12,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +62,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeMeasurementScreen(navController: NavController, db: DayDatabase, todoDB: TodoDatabase) {
     //時刻を取得
@@ -179,54 +187,89 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase, todoDB:
         Divider()
         Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedCard(border = BorderStroke(2.dp, Color(0xff00f0f0))) {
+        OutlinedCard(
+            border = BorderStroke(2.dp, Color(0xff00f0f0)),
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier
+                .width(250.dp)
+                .height(200.dp)
+        ) {
             val radioOptions = todoList
             //val radioOptions = listOf("A","B","C")
             val (selectedOption, onOptionSelected) = remember { mutableStateOf<String?>(null) }
 
-            Column() {
-                radioOptions.forEach {text ->
-                    Row(
-                        verticalAlignment = CenterVertically,
-                        modifier = Modifier
-                            .selectable(
+            Column(verticalArrangement = Arrangement.Bottom) {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    radioOptions.forEach {text ->
+                        Row(
+                            verticalAlignment = CenterVertically,
+                            modifier = Modifier
+                                .selectable(
+                                    selected = (text == selectedOption),
+                                    onClick = {
+                                        onOptionSelected(text)
+                                    }
+                                )
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            RadioButton(
                                 selected = (text == selectedOption),
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = Color(0xff00f0f0),
+                                    unselectedColor = Color.Black,
+                                ),
                                 onClick = {
                                     onOptionSelected(text)
+                                    doing = text
                                 }
                             )
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        RadioButton(
-                            selected = (text == selectedOption),
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = Color(0xff00f0f0),
-                                unselectedColor = Color.Black,
-                            ),
-                            onClick = {
-                                onOptionSelected(text)
-                                doing = text
-                            }
-                        )
 
-                        Text(
-                            text = text,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                        )
+                            Text(
+                                text = text,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .padding(start = 16.dp)
+                            )
+                        }
                     }
                 }
-
-                //doingを追加するボタン
-                Row(
-                    modifier = Modifier
-                        .clickable {  }
-                ) {
-
-                }
             }
+        }
+        //doingを追加するボタン
+        var txt by remember { mutableStateOf("") }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable {
+                    coroutineScope.launch {
+                        withContext(Dispatchers.IO) {
+                            if (txt != "") {
+                                todoDB.TodoDao().insertNewTodo(TodoEntity(todo = txt))
+
+                                txt = ""
+                            }
+                        }
+                    }
+                }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "add",
+                modifier = Modifier
+                    .padding(start = 10.dp)
+            )
+
+            TextField(
+                value = txt,
+                onValueChange = { newTxt ->
+                    txt = newTxt
+                },
+                singleLine = true,
+                modifier = Modifier
+                    .padding(10.dp)
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -237,7 +280,7 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase, todoDB:
             colors = ButtonDefaults.buttonColors(Color(0xff00f0f0))
         ) {
             Text(
-                text = "to SelectScreen",
+                text = "Back",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.Black

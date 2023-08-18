@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -26,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -56,7 +59,11 @@ fun DataScreen(navController: NavController, dayDatabase: DayDatabase, todoDB: T
             dayDatabase.TimeDataDao().getAll().collect() {
                 dataList = it
             }
+        }
+    }
 
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
             todoDB.TodoDao().getAll().collect() {
                 todoList = it
             }
@@ -156,17 +163,19 @@ fun DataScreen(navController: NavController, dayDatabase: DayDatabase, todoDB: T
             var selectedOption by remember { mutableStateOf("") }
             //このスコープ内にdoingのリストを表示し、選択できるようにする
             //LazyColumnで取得したtodoListの内容を表示することも考えたが、どれが選択状態なのかの見分けが付きにくくUIとして良くないのでRadioButtonを使いたい
-            Column() {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 todoList.forEach { todo ->
-                    RadioButton(
-                        selected = selectedOption == todo.todo, 
-                        onClick = { 
-                            selectedOption = todo.todo
-                            deleteId = todo.id
-                        }
-                    )
+                    Row(verticalAlignment = CenterVertically) {
+                        RadioButton(
+                            selected = selectedOption == todo.todo,
+                            onClick = {
+                                selectedOption = todo.todo
+                                deleteId = todo.id
+                            }
+                        )
 
-                    Text(text = todo.todo)
+                        Text(text = todo.todo)
+                    }
                 }
             }
         }
