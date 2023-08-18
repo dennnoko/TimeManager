@@ -192,46 +192,45 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase, todoDB:
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
                 .width(250.dp)
-                .height(200.dp)
+                .height(230.dp)
         ) {
             val radioOptions = todoList
             //val radioOptions = listOf("A","B","C")
             val (selectedOption, onOptionSelected) = remember { mutableStateOf<String?>(null) }
 
-            Column(verticalArrangement = Arrangement.Bottom) {
-                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                    radioOptions.forEach {text ->
-                        Row(
-                            verticalAlignment = CenterVertically,
-                            modifier = Modifier
-                                .selectable(
-                                    selected = (text == selectedOption),
-                                    onClick = {
-                                        onOptionSelected(text)
-                                    }
-                                )
-                                .padding(horizontal = 16.dp)
-                        ) {
-                            RadioButton(
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                radioOptions.forEach {text ->
+                    Row(
+                        verticalAlignment = CenterVertically,
+                        modifier = Modifier
+                            .selectable(
                                 selected = (text == selectedOption),
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = Color(0xff00f0f0),
-                                    unselectedColor = Color.Black,
-                                ),
                                 onClick = {
                                     onOptionSelected(text)
-                                    doing = text
                                 }
                             )
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        RadioButton(
+                            selected = (text == selectedOption),
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color(0xff00f0f0),
+                                unselectedColor = Color.Black,
+                            ),
+                            onClick = {
+                                onOptionSelected(text)
+                                doing = text
+                            },
+                            modifier = Modifier
+                                .padding(3.dp)
+                        )
 
-                            Text(
-                                text = text,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier
-                                    .padding(start = 16.dp)
-                            )
-                        }
+                        Text(
+                            text = text,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier
+                        )
                     }
                 }
             }
@@ -319,3 +318,30 @@ fun PreviewTimeMeasuremetScreen() {
         todoDB = TodoDatabase.getDatabase(LocalContext.current.applicationContext)
     )
 }
+
+/*
+@Preview
+@Composable
+fun PreviewRadioButton() {
+    RadioButton(
+        selected = (text == selectedOption),
+        colors = RadioButtonDefaults.colors(
+            selectedColor = Color(0xff00f0f0),
+            unselectedColor = Color.Black,
+        ),
+        onClick = {
+            onOptionSelected(text)
+            doing = text
+        },
+        modifier = Modifier
+            .padding(3.dp)
+    )
+
+    Text(
+        text = text,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Medium,
+        modifier = Modifier
+    )
+}
+*/

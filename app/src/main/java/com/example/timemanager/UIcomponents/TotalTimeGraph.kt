@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -87,6 +89,7 @@ fun TotalTimeGraph(db: DayDatabase) {
                         modifier = Modifier
                             .fillMaxHeight()
                             .padding(8.dp)
+                            .verticalScroll(rememberScrollState())
                     ) {
                         Text(
                             text = doing,

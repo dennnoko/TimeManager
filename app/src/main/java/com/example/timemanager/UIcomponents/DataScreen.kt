@@ -76,22 +76,9 @@ fun DataScreen(navController: NavController, dayDatabase: DayDatabase, todoDB: T
             .fillMaxWidth()
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = { navController.navigate("SelectScreen") },
-            colors = ButtonDefaults.buttonColors(Color(0xff00f0f0)),
-            shape = RoundedCornerShape(5.dp)
-        ) {
-            Text(
-                text = "to SelectScreen",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Black
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedCard(
-            border = BorderStroke(3.dp, color = Color(0xff00f0f0)),
+            border = BorderStroke(3.dp, color = Color.Gray),
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
                 .size(250.dp, 150.dp)
@@ -148,13 +135,13 @@ fun DataScreen(navController: NavController, dayDatabase: DayDatabase, todoDB: T
         Spacer(modifier = Modifier.height(10.dp))
 
         Divider()
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         //選択されたもののidを保持する変数
         var deleteId by remember { mutableStateOf(0) }
         
         OutlinedCard(
-            border = BorderStroke(3.dp, Color(0xff00f0f0)),
+            border = BorderStroke(3.dp, Color.Gray),
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
                 .size(250.dp, 150.dp)
@@ -191,9 +178,27 @@ fun DataScreen(navController: NavController, dayDatabase: DayDatabase, todoDB: T
                     }
                 }
             },
-            colors = ButtonDefaults.buttonColors(Color.Red)
+            shape = RoundedCornerShape(5.dp),
+            colors = ButtonDefaults.buttonColors(Color.Red),
         ) {
             Text(text = "Delete selected item", color = Color.Black)
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Divider()
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button(
+            onClick = { navController.navigate("SelectScreen") },
+            colors = ButtonDefaults.buttonColors(Color(0xff00f0f0)),
+            shape = RoundedCornerShape(5.dp)
+        ) {
+            Text(
+                text = "Back",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
+            )
         }
     }
 }
