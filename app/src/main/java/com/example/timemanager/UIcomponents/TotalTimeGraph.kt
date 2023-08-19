@@ -77,7 +77,7 @@ fun TotalTimeGraph(db: DayDatabase) {
 
                     LaunchedEffect(Unit) {
                         withContext(Dispatchers.IO) {
-                            doingTime = (db.TimeDataDao().getTotalTimeByDoing(doing) / 60) % 60
+                            doingTime = (db.TimeDataDao().getTotalTimeByDoing(doing) / 60)
                             doingTimeH = doingTime / 60
                             doingTimeM = doingTime % 60
                         }
