@@ -16,15 +16,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.RadioButtonDefaults
@@ -42,7 +46,9 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -239,7 +245,7 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase, todoDB:
         var txt by remember { mutableStateOf("") }
 
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = CenterVertically,
             modifier = Modifier
                 .clickable {
                     coroutineScope.launch {
@@ -254,18 +260,39 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase, todoDB:
                 }
         ) {
             Icon(
-                imageVector = Icons.Default.Add,
+                imageVector = Icons.Default.AddCircle,
                 contentDescription = "add",
                 modifier = Modifier
-                    .padding(start = 10.dp)
             )
 
-            TextField(
+            OutlinedTextField(
                 value = txt,
-                onValueChange = { newTxt ->
+                onValueChange = {newTxt ->
                     txt = newTxt
                 },
                 singleLine = true,
+                label = {
+                    Text(text = "Start something new")
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        coroutineScope.launch {
+                            withContext(Dispatchers.IO) {
+                                if (txt != "") {
+                                    todoDB.TodoDao().insertNewTodo(TodoEntity(todo = txt))
+
+                                    txt = ""
+
+                                    //入力状態の解除
+
+                                }
+                            }
+                        }
+                    }
+                ),
                 modifier = Modifier
                     .padding(10.dp)
             )
@@ -319,29 +346,3 @@ fun PreviewTimeMeasuremetScreen() {
     )
 }
 
-/*
-@Preview
-@Composable
-fun PreviewRadioButton() {
-    RadioButton(
-        selected = (text == selectedOption),
-        colors = RadioButtonDefaults.colors(
-            selectedColor = Color(0xff00f0f0),
-            unselectedColor = Color.Black,
-        ),
-        onClick = {
-            onOptionSelected(text)
-            doing = text
-        },
-        modifier = Modifier
-            .padding(3.dp)
-    )
-
-    Text(
-        text = text,
-        fontSize = 15.sp,
-        fontWeight = FontWeight.Medium,
-        modifier = Modifier
-    )
-}
-*/
