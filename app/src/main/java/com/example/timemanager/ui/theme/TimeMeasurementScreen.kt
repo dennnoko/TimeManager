@@ -285,9 +285,6 @@ fun TimeMeasurementScreen(navController: NavController, db: DayDatabase, todoDB:
                                     todoDB.TodoDao().insertNewTodo(TodoEntity(todo = txt))
 
                                     txt = ""
-
-                                    //入力状態の解除
-
                                 }
                             }
                         }
@@ -346,3 +343,8 @@ fun PreviewTimeMeasuremetScreen() {
     )
 }
 
+/*
+時間計測画面
+特に何も考えずに思いつくまま機能を追加していった結果とても見にくいコードになってしまった。
+この画面に実装した機能は大きく2つで、時間の計測と作業内容のリストへの新規項目の追加となっている。
+ */

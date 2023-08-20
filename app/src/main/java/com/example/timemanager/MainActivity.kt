@@ -29,3 +29,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+/*
+MainActivityではMainScreenを呼び出すだけ。TimeManagerThemeの引数でダークモードを無効化しておく(ダークモードに対応させるのが面倒だから...)
+ */

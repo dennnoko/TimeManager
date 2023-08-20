@@ -213,3 +213,8 @@ fun PreviewDataScreen() {
         DataScreen(navController , dayDatabase, todoDB)
     }
 }
+
+/*
+データ管理用の画面。
+記録のリセットと、作業項目の削除が可能。作業項目は1つずつの削除となっており、作業項目を消しても記録済みの作業時間記録は消えない。
+ */

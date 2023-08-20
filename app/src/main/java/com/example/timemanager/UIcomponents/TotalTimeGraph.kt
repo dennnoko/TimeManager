@@ -119,3 +119,8 @@ fun PreviewTotalTimeGraph() {
         TotalTimeGraph(db = DayDatabase.getDatabase(context = LocalContext.current.applicationContext))
     }
 }
+
+/*
+グラフの表示をするコンポーザブル関数。
+表示の仕方として、保存された作業リストの各内容ごとにデータベースから合計時間を分単位で取得し、棒グラフの縦の長さをその分に対応させることでグラフの長さが変わるようにした。
+ */

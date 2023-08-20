@@ -14,18 +14,21 @@ interface TimeDataDao {
     //全データ削除
     @Delete
     suspend fun deleteAll(dataList: List<TimeDataEntity>)
-    //リスト入手
     //特定のデータ削除
     @Delete
     suspend fun delete(timeData: TimeDataEntity)
+    //全データのリストを入手
     @Query("select * from TDE")
     fun getAll(): Flow<List<TimeDataEntity>>
-
     //doingのリストを返す
     @Query("SELECT DISTINCT doing FROM TDE")
     suspend fun getDistinctDoingList(): List<String>
-
     //何をしていたかを指定し、時間の合計を返す
     @Query("SELECT SUM(timeData) FROM TDE WHERE doing = :doing")
     suspend fun getTotalTimeByDoing(doing: String): Int
 }
+
+/*
+時間の記録データベースへの操作を書いたDao
+QueryのSQL文はChatGPTに書いてもらったので理解できていない
+ */

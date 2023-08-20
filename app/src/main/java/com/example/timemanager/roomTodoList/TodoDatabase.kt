@@ -24,3 +24,8 @@ abstract class TodoDatabase: RoomDatabase() {
         }
     }
 }
+
+/*
+作業内容のデータベース
+データベースを作成するメソッドが定義されている
+ */

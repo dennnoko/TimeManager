@@ -27,3 +27,8 @@ interface TodoListDao {
     @Query("select distinct todo from TodoE")
     fun getAllName(): Flow<List<String>>
 }
+
+/*
+作業項目についてのデータベースの処理をまとめたDao
+deleteTodoやdeleteAllなど、多分どこでも使用していない物を用意してしまっている。気が向いたら使用されていないか確認して消す。
+ */

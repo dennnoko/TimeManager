@@ -24,3 +24,8 @@ fun MainScreen() {
         composable("DataScreen") { DataScreen(navController, db, todoDB) }
     }
 }
+
+/*
+NavigationComposeを利用して画面遷移を管理する。遷移先の画面でデータベースのインスタンスが必要になるので、アプリで必ず実行されるここでインスタンスを生成して各Activityに引数として渡す形にした。
+routeの命名についてはスクリーンを表すファイル名をそもまま利用した。
+ */
